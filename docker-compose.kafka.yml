@@ -1,10 +1,38 @@
-version: "3"
+# version: "3.8"
 
-volumes:
-  kafka_data:
-    driver: local
+networks:
+  kafka-network:
+    driver: bridge
 
 services:
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    restart: "no"
+    networks:
+      - kafka-network
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      # Listener
+      # KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
+      # KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://localhost:9092,PLAINTEXT://localhost:9092"
+      # KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      # KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      # ALLOW_PLAINTEXT_LISTENER: "yes"
+      # KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      # KAFKA_ZOOKEEPER_SESSION_TIMEOUT: "6000"
+      # KAFKA_RESTART_ATTEMPTS: "10"
+      # KAFKA_RESTART_DELAY: "5"
+      # ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
+
   # kafka-ui:
   #   container_name: kafka-ui
   #   image: provectuslabs/kafka-ui:latest
@@ -27,36 +55,13 @@ services:
   #   volumes:
   #     - ./bitnami/zookeeper:/bitnami/zookeeper
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop
-    container_name: kafdrop
-    restart: "no"
-    ports:
-      - "9001:9000"
-    environment:
-      KAFKA_BROKERCONNECT: "kafka:29092"
-    depends_on:
-      - "kafka"
-
-  kafka:
-    image: obsidiandynamics/kafka
-    container_name: kafka
-    restart: "no"
-    ports:
-      - "2181:2181"
-      - "9092:9092"
-    environment:
-      # kafka settings for bitnami/kafka
-      # KAFKA_CFG_NODE_ID: 0
-      # KAFKA_CFG_PROCESS_ROLES: "controller,broker"
-      # KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: "0@kafka:9093"
-      # Listener
-      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
-      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://localhost:9092"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
-      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
-      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
-      KAFKA_ZOOKEEPER_SESSION_TIMEOUT: "6000"
-      KAFKA_RESTART_ATTEMPTS: "10"
-      KAFKA_RESTART_DELAY: "5"
-      ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
+  # kafdrop:
+  #   image: obsidiandynamics/kafdrop
+  #   container_name: kafdrop
+  #   restart: "no"
+  #   ports:
+  #     - "9001:9000"
+  #   environment:
+  #     KAFKA_BROKERCONNECT: "kafka:29092"
+  #   depends_on:
+  #     - "kafka"
