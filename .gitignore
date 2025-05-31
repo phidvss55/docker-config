@@ -8,3 +8,4 @@ kui
 
 # redis-data
 redis-insight-data
+postgres-data # ignore postgres-data directory
