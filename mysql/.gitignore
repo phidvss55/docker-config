@@ -1,0 +1,5 @@
+master
+slave
+
+*.md
+!mysql.md

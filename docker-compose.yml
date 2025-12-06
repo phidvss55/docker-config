@@ -1,0 +1,60 @@
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  dir-site:
+    driver_opts:
+      device: C:\DATA\docker
+      o: bind
+      type: "nfs"
+
+services:
+  my-php:
+    container_name: c-php
+    build:
+      dockerfile: Dockerfile
+      context: ./php/
+      args:
+        - WITH_XDEBUG=true
+    restart: always
+    hostname: php
+    networks:
+      - my-network
+    volumes:
+      - dir-site:/home/www/
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+    environment:
+      XDEBUG_CONFIG: remote_host=192.168.1.78 remote_port=9001
+
+  my-php56:
+    container_name: c-php56
+    build:
+      dockerfile: Dockerfile
+      context: ./php56/
+      args:
+        - WITH_XDEBUG=true
+    restart: always
+    hostname: php
+    networks:
+      - my-network
+    volumes:
+      - dir-site:/home/www/
+      - ./php56/php.ini:/usr/local/etc/php/php.ini
+    environment:
+      XDEBUG_CONFIG: remote_host=192.168.1.78 remote_port=9001
+
+  my-httpd:
+    container_name: c-httpd
+    image: "httpd:latest"
+    restart: always
+    hostname: httpd
+    networks:
+      - my-network
+    volumes:
+      - dir-site:/home/www/
+      - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+    ports:
+      - "80:80"
+      - "443:443"

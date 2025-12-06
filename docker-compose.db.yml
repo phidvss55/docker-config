@@ -1,0 +1,67 @@
+version: "3.8"
+
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  dir-site:
+    driver_opts:
+      device: "./"
+      o: bind
+      type: "nfs"
+
+services:
+  my-mysql:
+    container_name: c-mysql
+    image: mysql:8.0
+    restart: always
+    networks:
+      - my-network
+    volumes:
+      - ./data-mysql:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - ./databases:/home/databases
+    hostname: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+      - MYSQL_DATABASE=wp_dbtest
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=Abcd@12345678
+    ports:
+      - "8083:3306"
+
+  # postgres:
+  #   container_name: postgres
+  #   image: postgres
+  #   restart: always
+  #   volumes:
+  #     - ./data/db:/var/lib/postgresql/data
+  #   ports:
+  #     - "6543:5432"
+  #   environment:
+  #     - POSTGRES_DB=postgres
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=Abcd@12345678
+
+  # adminer:
+  #   container_name: adminer
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    restart: on-failure:5
+    networks:
+      - my-network
+    volumes:
+      - ./mongo/data:/data/db
+      - ./mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"

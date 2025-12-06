@@ -1,0 +1,19 @@
+version: "3"
+
+networks:
+  my-network:
+    driver: bridge
+
+services:
+  neo4j:
+    image: neo4j:latest
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_dbms_connector_http_listen__address=:7474
+    ports:
+      - 7474:7474
+      - 7473:7473
+      - 7687:7687
+    volumes:
+      - ./data:/data
+      # Add any additional volumes for custom configuration files or scripts if required

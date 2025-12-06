@@ -1,0 +1,19 @@
+node_modules
+.env
+app/tmp/
+db
+data
+bitnami
+kui
+
+# redis-data
+redis-insight-data
+postgres-data 
+
+databases
+data-mysql
+redis-data
+
+.vscode
+.idea
+.DS_Store
