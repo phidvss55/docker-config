@@ -43,6 +43,10 @@ print_path() {
   echo "$PATH"
 }
 
+up_sql_server() {
+  "$DOCKER" compose -f docker-compose.sql-server.yaml up -d
+}
+
 usage() {
   echo "Usage: $0 <command>"
   echo ""
@@ -56,6 +60,7 @@ usage() {
   echo "  ssh-redis       - docker exec -it c-redis redis-cli"
   echo "  down            - docker compose down --remove-orphans"
   echo "  print-path      - print PATH"
+  echo "  up-sql-server   - docker compose up -d (docker-compose.sql-server.yaml)"
 }
 
 case "$1" in
@@ -85,6 +90,9 @@ case "$1" in
     ;;
   print-path)
     print_path
+    ;;
+  up-sql-server)
+    up_sql_server
     ;;
   *)
     usage

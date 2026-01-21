@@ -12,24 +12,24 @@ volumes:
       type: "nfs"
 
 services:
-  my-mysql:
-    container_name: c-mysql
-    image: mysql:8.0
-    restart: always
-    networks:
-      - my-network
-    volumes:
-      - ./data-mysql:/var/lib/mysql
-      - ./mysql/my.cnf:/etc/mysql/my.cnf
-      - ./databases:/home/databases
-    hostname: mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=12345678
-      - MYSQL_DATABASE=wp_dbtest
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=Abcd@12345678
-    ports:
-      - "8083:3306"
+  # my-mysql:
+  #   container_name: c-mysql
+  #   image: mysql:8.0
+  #   restart: always
+  #   networks:
+  #     - my-network
+  #   volumes:
+  #     - ./data-mysql:/var/lib/mysql
+  #     - ./mysql/my.cnf:/etc/mysql/my.cnf
+  #     - ./databases:/home/databases
+  #   hostname: mysql
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=12345678
+  #     - MYSQL_DATABASE=wp_dbtest
+  #     - MYSQL_USER=admin
+  #     - MYSQL_PASSWORD=Abcd@12345678
+  #   ports:
+  #     - "8083:3306"
 
   # postgres:
   #   container_name: postgres
@@ -64,4 +64,4 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     ports:
-      - "27017:27017"
+      - "27027:27017"
