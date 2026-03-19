@@ -15,6 +15,10 @@ up() {
   "$DOCKER" compose -f docker-compose.yml up -d
 }
 
+up_file() {
+  "$DOCKER" compose -f $1 up -d
+}
+
 up_db() {
   "$DOCKER" compose -f docker-compose.db.yml up -d
 }
@@ -53,6 +57,7 @@ usage() {
   echo "Commands:"
   echo "  run             - Alias for up"
   echo "  up              - docker compose up -d (docker-compose.yml)"
+  echo "  up-file         - docker compose -f [docker-file] up -d (docker-file)"
   echo "  up-db           - docker compose up -d (docker-compose.db.yml)"
   echo "  up-redis        - docker compose up -d (docker-compose.redis.yml)"
   echo "  up-kafka        - docker compose up -d (docker-compose.kafka.yml)"
@@ -93,6 +98,9 @@ case "$1" in
     ;;
   up-sql-server)
     up_sql_server
+    ;;
+  up-file)
+    up_file $2
     ;;
   *)
     usage

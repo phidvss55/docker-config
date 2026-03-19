@@ -1,17 +1,7 @@
-# version: "3.8"
-
-networks:
-  kafka-network:
-    driver: bridge
-
-volumes:
-  kafka_data:
-    driver: local
-
 services:
   kafka:
-    image: bitnami/kafka:latest
     container_name: kafka
+    image: bitnamilegacy/kafka:latest
     restart: no
     environment:
       - KAFKA_CFG_NODE_ID=1
@@ -28,10 +18,13 @@ services:
       - "19092:9094"
     networks:
       - kafka-network
+    volumes:
+      - kafka-data:/bitnami/kafka # window
+      # - ./data/.kafka-data:/bitnami/kafka # for linux/ubuntu
 
   kafka-ui:
-    image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
     restart: no
     depends_on:
       - kafka
@@ -44,6 +37,7 @@ services:
       - KAFKA_CLUSTERS_0_TOPIC_AUTO_CREATE=true
     networks:
       - kafka-network
+    user: root
 
   # zookeeper:
   #   container_name: zookeeper
@@ -67,3 +61,10 @@ services:
   #     KAFKA_BROKERCONNECT: "kafka:29092"
   #   depends_on:
   #     - "kafka"
+
+networks:
+  kafka-network:
+    driver: bridge
+
+volumes:
+  kafka-data:
