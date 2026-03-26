@@ -1,0 +1,24 @@
+# Version control
+.git*
+
+# Development files
+*.log
+.env*
+*.md
+README.md
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# SSH keys (don't include in image)
+*.pem
+*.key
+id_rsa*
+authorized_keys

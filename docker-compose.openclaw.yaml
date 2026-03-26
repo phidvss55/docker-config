@@ -1,0 +1,43 @@
+services:
+  openclaw-container:
+    container_name: openclaw_container
+    build:
+      context: ./openclaw
+      dockerfile: Dockerfile
+    image: openclaw:latest
+    restart: unless-stopped
+    ports:
+      - "18789:18789"
+      - "22:22" # Map to host port 2222 to avoid conflict with host SSH
+#     volumes:
+#       - openclaw_data:/app/data
+#       - ./openclaw/ssh_host_keys:/etc/ssh/ssh_host_keys:ro # Persist SSH host keys
+#     environment:
+#       - TZ=UTC
+#     security_opt:
+#       - no-new-privileges:true
+#     # Resource limits
+#     deploy:
+#       resources:
+#         limits:
+#           cpus: "1.0"
+#           memory: 1G
+#         reservations:
+#           cpus: "0.5"
+#           memory: 512M
+#     healthcheck:
+#       test: ["CMD", "nc", "-z", "localhost", "22"]
+#       interval: 30s
+#       timeout: 3s
+#       start_period: 10s
+#       retries: 3
+#     networks:
+#       - openclaw_network
+
+# volumes:
+#   openclaw_data:
+#     driver: local
+
+networks:
+  openclaw_network:
+    driver: bridge
