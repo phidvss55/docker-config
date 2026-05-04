@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   postgres:
     container_name: postgres_container
@@ -73,3 +75,7 @@ services:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     depends_on:
       - elasticsearch
+
+volumes:
+  data01:
+    driver: local

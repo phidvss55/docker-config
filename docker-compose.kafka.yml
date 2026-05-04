@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   kafka:
     container_name: kafka
@@ -7,20 +9,21 @@ services:
       - KAFKA_CFG_NODE_ID=1
       - KAFKA_CFG_PROCESS_ROLES=broker,controller
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://0.0.0.0:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:19092
+      # - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
     ports:
       - "19092:9094"
     networks:
-      - kafka-network
+      - my-network
     volumes:
-      - kafka-data:/bitnami/kafka # window
-      # - ./data/.kafka-data:/bitnami/kafka # for linux/ubuntu
+      - kafka-data:/bitnami/kafka # window  
 
   kafka-ui:
     container_name: kafka-ui
@@ -31,39 +34,29 @@ services:
     ports:
       - "8001:8080"
     environment:
+      # Local Kafka cluster
       - KAFKA_CLUSTERS_0_NAME=local-cluster
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
       - KAFKA_CLUSTERS_0_READONLY=false
       - KAFKA_CLUSTERS_0_TOPIC_AUTO_CREATE=true
+
+      # Cloud Kafka cluster (uncomment and set credentials to enable)
+      - KAFKA_CLUSTERS_1_NAME=${KAFKA_CLOUD_NAME}
+      - KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS=${KAFKA_CLOUD_SERVER}
+      - KAFKA_CLUSTERS_1_PROPERTIES_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_CLUSTERS_1_PROPERTIES_SASL_MECHANISM=PLAIN
+      - KAFKA_CLUSTERS_1_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule
+        required username="${KAFKA_CLOUD_USERNAME}"
+        password="${KAFKA_CLOUD_PASSWORD}";
+      - KAFKA_CLUSTERS_1_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=https
+      - KAFKA_CLUSTERS_1_PROPERTIES_CLIENT_ID=kafka-ui-client
+      - KAFKA_CLUSTERS_1_PROPERTIES_GROUP_ID=kafka-ui-group
     networks:
-      - kafka-network
+      - my-network
     user: root
 
-  # zookeeper:
-  #   container_name: zookeeper
-  #   image: bitnami/zookeeper:latest
-  #   ports:
-  #     - "2181:2181"
-  #   environment:
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #     ZOOKEEPER_TICK_TIME: 2000
-  #     ALLOW_ANONYMOUS_LOGIN: true
-  #   volumes:
-  #     - ./bitnami/zookeeper:/bitnami/zookeeper
-
-  # kafdrop:
-  #   image: obsidiandynamics/kafdrop
-  #   container_name: kafdrop
-  #   restart: "no"
-  #   ports:
-  #     - "9001:9000"
-  #   environment:
-  #     KAFKA_BROKERCONNECT: "kafka:29092"
-  #   depends_on:
-  #     - "kafka"
-
 networks:
-  kafka-network:
+  my-network:
     driver: bridge
 
 volumes:

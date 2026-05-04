@@ -2,24 +2,31 @@ services:
   redis:
     image: redis:7.4
     container_name: redis
-    restart: no
+    restart: unless-stopped
     networks:
       - my-network
     ports:
       - 6379:6379
     volumes:
       - redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   redis-insight:
     image: redislabs/redisinsight:latest
     container_name: redis-insight
-    restart: no
+    restart: unless-stopped
     ports:
       - 5540:5540
     networks:
       - my-network
     volumes:
       - redis-insight-data:/data
+    depends_on:
+      - redis
 
 volumes:
   redis-data:
